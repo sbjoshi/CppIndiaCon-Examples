@@ -5,4 +5,4 @@ This is the repository containing examples used during
 Code Contracts.
 
 # License
-Please see [License](LICENCE) file.
+Please see [License](LICENSE) file.
