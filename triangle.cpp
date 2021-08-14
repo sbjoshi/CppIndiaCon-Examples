@@ -23,7 +23,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <iostream>
 #include <numbers>
 
-#define EPSILON 0.01
+#define EPSILON 0.0001
 
 template <std::floating_point T>
 class point_t
@@ -48,6 +48,11 @@ public:
 	void print(std::ostream& out) const
 	{
 		out << "(" << x << "," << y << ")";
+	}
+	point_t<T> rotate(T angle)
+	{
+		return point_t<T>((x*std::cos(angle))-(y*std::sin(angle)),
+		                   (x*std::sin(angle)) + (y*std::cos(angle)));
 	}
 };
 
@@ -89,6 +94,34 @@ public:
 		p2.print(out); out << ":";
 		p3.print(out); out << std::endl;
 	}
+	void scale(T scale_factor)
+	{
+		p1=p1*scale_factor;
+		p2=p2*scale_factor;
+		p3=p3*scale_factor;
+	}
+	void translate(point_t<T> new_origin) 
+	{
+		p1=p1-new_origin;
+		p2=p2-new_origin;
+		p3=p3-new_origin;
+
+	}
+
+	void rotate(T angle)
+	{
+		p1=p1.rotate(angle);
+		p2=p2.rotate(angle);
+		p3=p3.rotate(angle);
+		/*
+		p1.x = (p1.x*std::cos(angle)) - (p1.y*std::sin(angle));
+		p1.y = (p1.y*std::cos(angle)) + (p1.x*std::sin(angle));
+		p2.x = (p2.x*std::cos(angle)) - (p2.y*std::sin(angle));
+		p2.y = (p2.y*std::cos(angle)) + (p2.x*std::sin(angle));
+		p3.x = (p3.x*std::cos(angle)) - (p3.y*std::sin(angle));
+		p3.y = (p3.y*std::cos(angle)) + (p3.x*std::sin(angle));
+		*/
+	}
 };
 
 
@@ -127,28 +160,19 @@ public:
 	void translate(point_t<T> new_origin) 
 	{
 		boost::contract::check c = boost::contract::public_function(this);
-		triangle_t<T>::p1=triangle_t<T>::p1-new_origin;
-		triangle_t<T>::p2=triangle_t<T>::p2-new_origin;
-		triangle_t<T>::p3=triangle_t<T>::p3-new_origin;
+		triangle_t<T>::translate(new_origin);
 
 	}
 
 	void scale(T scale_factor)
 	{
 		boost::contract::check c = boost::contract::public_function(this);
-		triangle_t<T>::p1=triangle_t<T>::p1*scale_factor;
-		triangle_t<T>::p2=triangle_t<T>::p2*scale_factor;
-		triangle_t<T>::p3=triangle_t<T>::p3*scale_factor;
+		triangle_t<T>::scale(scale_factor);
 	}
 	void rotate(T angle)
 	{
 		boost::contract::check c = boost::contract::public_function(this);
-		triangle_t<T>::p1.x = (triangle_t<T>::p1.x*std::cos(angle)) - (triangle_t<T>::p1.y*std::sin(angle));
-		triangle_t<T>::p1.y = (triangle_t<T>::p1.y*std::cos(angle)) + (triangle_t<T>::p1.x*std::sin(angle));
-		triangle_t<T>::p2.x = (triangle_t<T>::p2.x*std::cos(angle)) - (triangle_t<T>::p2.y*std::sin(angle));
-		triangle_t<T>::p2.y = (triangle_t<T>::p2.y*std::cos(angle)) + (triangle_t<T>::p2.x*std::sin(angle));
-		triangle_t<T>::p3.x = (triangle_t<T>::p3.x*std::cos(angle)) - (triangle_t<T>::p3.y*std::sin(angle));
-		triangle_t<T>::p3.y = (triangle_t<T>::p3.y*std::cos(angle)) + (triangle_t<T>::p3.x*std::sin(angle));
+		triangle_t<T>::rotate(angle);
 	}
 };
 
@@ -159,11 +183,11 @@ int main()
 					 point_t<ftype_t>(1.0,0.0),
 					 point_t<ftype_t>(0.0,1.0));
 					 t1.print(std::cout);
-	//t1.translate(point_t<double>(2.0,2.0));
+	t1.translate(point_t<ftype_t>(2.0,2.0));
 	t1.print(std::cout);
-	t1.rotate(std::numbers::pi_v<ftype_t>/2.0);
+	t1.rotate(std::numbers::pi_v<ftype_t>/6.0);
 	t1.print(std::cout);
-	//t1.scale(100000.0);
+	t1.scale(1.5);
 	t1.print(std::cout);
 	return EXIT_SUCCESS;
 }
