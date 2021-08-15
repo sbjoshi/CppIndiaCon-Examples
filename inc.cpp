@@ -24,9 +24,8 @@ int inc(int& x) {
     boost::contract::old_ptr<int> old_x = BOOST_CONTRACT_OLDOF(x);
     // post condition, often refers to old_values
     boost::contract::check c = boost::contract::function()
-        .precondition([&x=std::as_const(x)] {
+        .precondition([&x=std::as_const(x)] { 
             BOOST_CONTRACT_ASSERT(x < std::numeric_limits<int>::max());
-           //assert(x<std::numeric_limits<int>::max());
         })
         .postcondition([&] {
             BOOST_CONTRACT_ASSERT(x == *old_x + 1);
@@ -49,7 +48,7 @@ int main()
 	std::cout << x << std::endl;
 	int y=inc(x);
 	std::cout << x << ":" << y << std::endl;
-    //int z = std::numeric_limits<int>::max();
-    //std::cout << inc(z) << std::endl;
+  //  int z = std::numeric_limits<int>::max();
+  //  std::cout << inc(z) << std::endl;
 	return 0;
 }

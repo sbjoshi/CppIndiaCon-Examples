@@ -130,6 +130,7 @@ public:
 		p1=p1.rotate(angle);
 		p2=p2.rotate(angle);
 		p3=p3.rotate(angle);
+		
 		/*
 		p1.x = (p1.x*std::cos(angle)) - (p1.y*std::sin(angle));
 		p1.y = (p1.y*std::cos(angle)) + (p1.x*std::sin(angle));
@@ -138,6 +139,7 @@ public:
 		p3.x = (p3.x*std::cos(angle)) - (p3.y*std::sin(angle));
 		p3.y = (p3.y*std::cos(angle)) + (p3.x*std::sin(angle));
 		*/
+		
 	}
 };
 
@@ -215,8 +217,8 @@ int main()
 {
 	using ftype_t = long double;
 	isosceles_triangle_t<ftype_t> t1(point_t<ftype_t>(0.0,0.0),
-					 point_t<ftype_t>(-1.0,0.0),
-					 point_t<ftype_t>(1.0,0.0));
+					 point_t<ftype_t>(1.0,0.0),
+					 point_t<ftype_t>(0.0,1.0));
 					 t1.print(std::cout);
 	t1.translate(point_t<ftype_t>(2.0,2.0));
 	t1.print(std::cout);

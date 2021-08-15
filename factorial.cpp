@@ -27,7 +27,7 @@ int factorial(int x)
 	.postcondition(
 		[&]{
 			BOOST_CONTRACT_ASSERT(result>=x);
-			BOOST_CONTRACT_ASSERT(x==0 || (result/prev_result)==(i-1));
+			BOOST_CONTRACT_ASSERT((x==0 && result ==1) || (result/prev_result==x));
 		}
 	);
 
@@ -38,7 +38,6 @@ int factorial(int x)
 	{
 		prev_result=result;
 		result*=i;
-	//	BOOST_CONTRACT_ASSERT((result/prev_result)==i);
 	}
 	return result;
 }
