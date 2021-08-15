@@ -76,7 +76,7 @@ constexpr bool close_enough(T a, T b)
 }
 
 template <std::floating_point T>
-class triangle_t
+class triangle_t : public boost::contract::constructor_precondition<triangle_t<T>>
 {
 protected:
 	point_t<T> p1;
@@ -85,7 +85,16 @@ protected:
 
 public:
 	triangle_t(point_t<T> _p1, point_t<T> _p2,
-		   point_t<T> _p3) : p1(_p1), p2(_p2), p3(_p3) {}
+		   point_t<T> _p3) : boost::contract::constructor_precondition<triangle_t<T>>([&]{
+
+			   T d1 = distance(_p1,_p2);
+			   T d2 = distance (_p2,_p3);
+			   T d3 = distance(_p1,_p3);
+			   BOOST_CONTRACT_ASSERT(d1+d2>d3 && d2+d3 > d1 && d1+d3 > d2);
+
+
+		   }),
+		    p1(_p1), p2(_p2), p3(_p3) {}
 	triangle_t(T x1, T y1, T x2, T y2, T x3, T y3) : p1(x1,y1),
 	p2(x2,y2), p3(x3,y3) {}
 	void print(std::ostream& out) const
@@ -180,8 +189,8 @@ int main()
 {
 	using ftype_t = long double;
 	isosceles_triangle_t<ftype_t> t1(point_t<ftype_t>(0.0,0.0),
-					 point_t<ftype_t>(1.0,0.0),
-					 point_t<ftype_t>(0.0,1.0));
+					 point_t<ftype_t>(-1.0,0.0),
+					 point_t<ftype_t>(1.0,0.0));
 					 t1.print(std::cout);
 	t1.translate(point_t<ftype_t>(2.0,2.0));
 	t1.print(std::cout);
