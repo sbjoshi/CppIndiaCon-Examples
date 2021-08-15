@@ -76,7 +76,10 @@ constexpr bool close_enough(T a, T b)
 }
 
 template <std::floating_point T>
-class triangle_t : public boost::contract::constructor_precondition<triangle_t<T>>
+class triangle_t
+#ifdef CONTRACTS_CHECK
+ : public boost::contract::constructor_precondition<triangle_t<T>>
+#endif
 {
 protected:
 	point_t<T> p1;
@@ -85,7 +88,9 @@ protected:
 
 public:
 	triangle_t(point_t<T> _p1, point_t<T> _p2,
-		   point_t<T> _p3) : boost::contract::constructor_precondition<triangle_t<T>>([&]{
+		   point_t<T> _p3)
+#ifdef CONTRACTS_CHECK
+		     : boost::contract::constructor_precondition<triangle_t<T>>([&]{
 
 			   T d1 = distance(_p1,_p2);
 			   T d2 = distance (_p2,_p3);
@@ -94,6 +99,9 @@ public:
 
 
 		   }),
+#else 
+	:
+#endif
 		    p1(_p1), p2(_p2), p3(_p3) {}
 	triangle_t(T x1, T y1, T x2, T y2, T x3, T y3) : p1(x1,y1),
 	p2(x2,y2), p3(x3,y3) {}
@@ -135,12 +143,19 @@ public:
 
 
 template <std::floating_point T>
-class isosceles_triangle_t : public boost::contract::constructor_precondition<isosceles_triangle_t<T>>,
+class isosceles_triangle_t
+#ifdef CONTRACTS_CHECK
+ : public boost::contract::constructor_precondition<isosceles_triangle_t<T>>,
+#else
+  :
+#endif
 			     public triangle_t<T>
 {
 public:
 	isosceles_triangle_t(point_t<T> _p1, point_t<T> _p2,
-			     point_t<T> _p3) : boost::contract::constructor_precondition<isosceles_triangle_t<T>>([&]
+			     point_t<T> _p3)
+#ifdef CONTRACTS_CHECK			     
+			      : boost::contract::constructor_precondition<isosceles_triangle_t<T>>([&]
 				  {
 				  T d1 = dist_squared(_p1, _p2);
 				  T d2 = dist_squared(_p2, _p3);
@@ -148,7 +163,11 @@ public:
 				  BOOST_CONTRACT_ASSERT(close_enough(d1, d2) ||
 					close_enough(d2, d3) || close_enough(d1, d3));
 				  }),
+#else
+  :
+#endif
 					      triangle_t<T>::triangle_t(_p1, _p2, _p3) { }
+#ifdef CONTRACTS_CHECK
 	void invariant() const
 	{
 		point_t<T> pp1,pp2,pp3;
@@ -164,23 +183,30 @@ public:
 		BOOST_CONTRACT_ASSERT(close_enough(d1, d2) ||
 				      close_enough(d2, d3) || close_enough(d1, d3));
 	}
-
+#endif
 
 	void translate(point_t<T> new_origin) 
 	{
+#ifdef CONTRACTS_CHECK
 		boost::contract::check c = boost::contract::public_function(this);
+#endif
 		triangle_t<T>::translate(new_origin);
 
 	}
 
 	void scale(T scale_factor)
 	{
+
+#ifdef CONTRACTS_CHECK
 		boost::contract::check c = boost::contract::public_function(this);
+#endif
 		triangle_t<T>::scale(scale_factor);
 	}
 	void rotate(T angle)
 	{
+#ifdef CONTRACTS_CHECK
 		boost::contract::check c = boost::contract::public_function(this);
+#endif
 		triangle_t<T>::rotate(angle);
 	}
 };
